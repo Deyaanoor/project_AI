@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nim Game</title>
+  <link rel="stylesheet" href="./src/style.css">
+  <link rel="stylesheet" href="./src/sidebare.css">
+
+</head>
+<body>
+  
+  <div id="main-container">
+
+    <div class="menu">
+    
+    <ul class="menu-content">
+    
+    <li><a href="home.html">
+
+    <span class="material-symbols-outlined">home</span><span>Home</span></a></1i>
+    
+    <li><a href="cart.html">
+    
+    <span class="material-symbols-outlined">dashboard</span><span>DashBoard</span></a></1i>
+    
+    <li><a href="home.html">
+
+    <span class="material-symbols-outlined">logout</span><span>Logout</span></a></li>
+    
+    </ul>
+    
+    </div>
+
+    <div class="game-container">
+        <h1>Nim Game</h1>
+        <div id="piles-container"></div>
+        <p id="result"></p>
+        <button class="styled-button" onclick="startGame()">Start Game</button>
+      </div>
+
+   </div>
+
+
+  <script>
+    let piles = [];
+    var inp1 = -1;
+    let ip = prompt('How many objects do you want to enter', '1');
+    let inputValue = 0;
+
+    if (ip == 1) inputValue = 1;
+    if (2 <= ip && ip <= 4) inputValue = 2;
+    if (5 <= ip && ip <= 9) inputValue = 3;
+    if (10 <= ip && ip <= 16) inputValue = 4;
+    if (17 <= ip && ip <= 25) inputValue = 5;
+
+    let currentPlayer = 1; // for human, 2 for AI
+
+    function startGame() {
+      piles = Array.from({ length: Math.floor(inputValue) }, () => Math.floor(inp1 == -1 ? (inp1 = (inp1 + 2)) : (ip = (ip - inp1)) <= (inp1 = (inp1 + 2)) ? ip : inp1));
+      displayPiles();
+      currentPlayer = 1;
+      document.getElementById('result').innerText = 'Your turn. Click on a pile to remove objects.';
+    }
+
+    function displayPiles() {
+      let pilesContainer = document.getElementById('piles-container');
+      pilesContainer.innerHTML = '';
+
+      for (let i = 0; i < piles.length; i++) {
+        let pile = document.createElement('div');
+        pile.className = 'pile';
+        pile.style.display = 'block';
+        pile.style.marginBottom = '15px';
+        pile.style.borderRadius = '15px';
+
+        for (let ii = 0; ii < piles[i]; ii++) {
+          pile.innerHTML += `
+            <div style="
+              display: inline-block;
+              width: 35px;
+              height: 35px;
+              margin-left: 15px;
+              padding-top: 7px;
+            ">
+              <img style="
+                border-radius: 15px;
+                border: 1px solid;
+                width: 100%;
+                height: auto;
+              " src="img/images.jpg" alt="Description">
+            </div>
+          `;
+        }
+
+        pile.addEventListener('click', () => takeObjects(i));
+        pilesContainer.appendChild(pile);
+      }
+    }
+
+    function takeObjects(pileIndex) {
+      if (currentPlayer === 1) {
+        let objectsToRemove = prompt('How many objects do you want to remove from the pile?', '1');
+        objectsToRemove = parseInt(objectsToRemove);
+
+        if (isNaN(objectsToRemove) || objectsToRemove < 1 || objectsToRemove > piles[pileIndex]) {
+          alert('Invalid input. Please enter a valid number.');
+          return;
+        }
+
+        piles[pileIndex] -= objectsToRemove;
+        if (piles.every(pile => pile === 0)) {
+          document.getElementById('result').innerText = 'Congratulations! You win!';
+        } else {
+          currentPlayer = 2;
+          document.getElementById('result').innerText = 'AI\'s turn.';
+          setTimeout(aiMove, 1000); // Delay AI move for better user experience
+        }
+      }
+
+      displayPiles();
+    }
+
+    function aiMove() {
+      let bestMove = getBestMove(piles.slice(), 2); // Use depth 2 for simplicity
+      piles = bestMove.piles;
+
+      if (piles.every(pile => pile === 0)) {
+        document.getElementById('result').innerText = 'AI wins! Better luck next time.';
+      } else {
+        currentPlayer = 1;
+        document.getElementById('result').innerText = 'Your turn. Click on a pile to remove objects.';
+      }
+
+      displayPiles();
+    }
+
+    function getBestMove(currentPiles, depth) {
+      let bestMove = null;
+      let bestScore = -Infinity;
+
+      for (let i = 0; i < currentPiles.length; i++) {
+        for (let j = 1; j <= currentPiles[i]; j++) {
+          let newPiles = currentPiles.slice();
+          newPiles[i] -= j;
+
+          let score = minimax(newPiles, depth, false);
+
+          if (score > bestScore) {
+            bestScore = score;
+            bestMove = { piles: newPiles };
+          }
+        }
+      }
+
+      return bestMove;
+    }
+
+    function minimax(piles, depth, maximizingPlayer) {
+      if (depth === 0 || piles.every(pile => pile === 0)) {
+        return maximizingPlayer ? -1 : 1;
+      }
+
+      if (maximizingPlayer) {
+        let maxEval = -Infinity;
+
+        for (let i = 0; i < piles.length; i++) {
+          for (let j = 1; j <= piles[i]; j++) {
+            let newPiles = piles.slice();
+            newPiles[i] -= j;
+
+            let eval = minimax(newPiles, depth - 1, false);
+            maxEval = Math.max(maxEval, eval);
+          }
+        }
+
+        return maxEval;
+      } else {
+        let minEval = Infinity;
+
+        for (let i = 0; i < piles.length; i++) {
+          for (let j = 1; j <= piles[i]; j++) {
+            let newPiles = piles.slice();
+            newPiles[i] -= j;
+
+            let eval = minimax(newPiles, depth - 1, true);
+            minEval = Math.min(minEval, eval);
+          }
+        }
+
+        return minEval;
+      }
+    }
+  </script>
+</body>
+</html>

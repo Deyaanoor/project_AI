@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nim Game with Alpha-Beta Algorithm</title>
+  <link rel="stylesheet" href="./src/style.css">
+  <link rel="stylesheet" href="./src/sidebare.css">
+  <script src="function.js" defer></script>
+</head>
+<body>
+  <div id="main-container">
+
+    <div class="menu">
+    
+    <ul class="menu-content">
+    
+    <li><a href="home.html">
+
+    <span class="material-symbols-outlined">home</span><span>Home</span></a></1i>
+    
+    <li><a href="cart.html">
+    
+    <span class="material-symbols-outlined">dashboard</span><span>DashBoard</span></a></1i>
+    
+    <li><a href="home.html">
+
+    <span class="material-symbols-outlined">logout</span><span>Logout</span></a></li>
+    
+    </ul>
+    
+    </div>
+
+    <div class="game-container">
+        <h1>Nim Game</h1>
+        <div id="piles-container"></div>
+        <p id="result"></p>
+        <button class="styled-button" onclick="startGame()">Start Game</button>
+      </div>
+
+   </div>
+
+
+  <script>
+    let piles = [];
+    var inp1 = -1;
+    let pointer=0;
+     let ip = prompt('How many objects do you want to add ?', '1');
+    let inputValue = 1;
+    let currentPlayer = 1; // for human, 2 for AI
+    let z=0;
+    let flgsearch=false;
+    let arraycon=[];
+    let aiwin=false;
+    function startGame() {
+      piles = Array.from({ length: Math.floor(inputValue) }, () => Math.floor(ip));
+      console.log(piles);
+      displayPiles();
+      currentPlayer = 1;
+      document.getElementById('result').innerText = 'Your turn. Click on a pile to split.';
+    }
+    
+
+    function displayPiles() {
+
+      
+      let pilesContainer = document.getElementById('piles-container');
+      pilesContainer.innerHTML = '';
+
+      for (let i = 0; i < 1; i++) {///
+        let pile = document.createElement('div');
+        pile.className = 'pile';
+        pile.style.display = 'block';
+        pile.style.marginBottom = '15px';
+        pile.style.borderRadius = '15px';
+        console.log(piles[i]);
+        for(let j=0;j<piles.length;j++){
+        for (let ii = 0; ii <piles[j] ; ii++) {
+
+          pile.innerHTML += `
+            <div style="
+              display: inline-block;
+              width: 35px;
+              height: 35px;
+              margin-left: 15px;
+              padding-top: 7px;
+            ">
+              <img style="
+                border-radius: 15px;
+                border: 1px solid;
+                width: 100%;
+                height: auto;
+              " src="img/images.jpg" alt="Description">
+            </div>
+          `;
+        }
+        if((piles.length>1)){
+           ;
+          pile.innerHTML+=`
+          <span class="word-space"></span>`;
+        }
+        
+      }
+        
+
+        pile.addEventListener('click', () => takeObjects(i));
+        pilesContainer.appendChild(pile);
+      }
+    }
+  
+    function takeObjects(pileIndex) {
+      let sum=0;
+      let xAsIntegers=[];
+      let newarr=[];
+      
+      if (currentPlayer === 1) {
+        let numofsplit = prompt('How many objects do you want to split?', '1');
+        numofsplit = parseInt(numofsplit);
+                            ;
+        for(let i=0; i<numofsplit;i++){ 
+          let numofsplit = prompt('How many objects do you want to group?', '1');
+          let x=numofsplit.split(",");
+          z=numofsplit.split(",").join("");
+          let y=0;
+          console.log("z",z);
+           xAsIntegers = x.map(item => parseInt(item));
+          for(let ii=0;ii<xAsIntegers.length;ii++){
+          sum+=xAsIntegers[ii];
+          y=xAsIntegers[ii];
+          }
+        }
+        //divid
+        ip=piles;
+        let rp=ip;
+        let myarr=myArray;
+        divnum(ip);
+        console.log(myArray);
+        let n=z.toString();
+        console.log(n);
+                            
+        Search(n);
+
+        
+        
+        
+        
+      //   ;
+        console.log(flagSearch);
+      
+        if ((flagSearch==false)) {
+          alert('Invalid input. Please enter a valid number.');
+          return;
+        }
+        piles =xAsIntegers;
+        
+      
+        
+        divnum(ip);
+
+        console.log("myArray cheack",myArray);
+        if (myArray.length==0) {
+          document.getElementById('result').innerText = 'Congratulations! You winner!';
+        } else {
+          myArray=myarr;
+          currentPlayer = 2;
+          document.getElementById('result').innerText = 'AI\'s turn.';
+          setTimeout(aiMove, 1000); // Delay AI move for better user experience
+          
+        }
+      }
+
+    displayPiles();
+    }
+    function conbest(bestMove){
+      var value = bestMove;
+      var arrayValue = value.split('');
+// Joining the array elements with commas
+      var newArray = arrayValue.join(',');
+      let x=parseInt(arrayValue[0])+parseInt(arrayValue[1]);
+       arraycon=[];
+      arraycon[0]=x;
+      x.toString();
+      for(let i=2;i<arrayValue.length;i++){
+        arraycon[i-1]=parseInt(arrayValue[i]);
+      }
+
+    }
+
+    function aiMove() {
+  var depth = 5;
+                       ;
+  
+  let bestMove = getBestMove(piles, -Infinity, Infinity, currentPlayer, depth);
+  console.log("best move", bestMove);
+                      ;
+                    
+  if(bestMove.piles[0]!=null){
+  var value = bestMove.piles[0];
+  conbest(value);
+  piles=arraycon;
+  debugger;
+  }
+  else{
+    debugger;
+    piles=ip;
+    aiwin=true;
+  }
+  
+  
+  myArray=piles;
+                      
+   ;
+  if (aiwin) {
+  //                      
+    document.getElementById('result').innerText = 'AI wins! Better luck next time.';
+  } else {
+    //                    
+    currentPlayer = 1;
+    document.getElementById('result').innerText = 'Your turn. Click on a pile to remove objects.';
+  }
+//                      
+  displayPiles();
+}
+
+function getBestMove(currentPiles, alpha, beta, currentPlayer, depth) {
+  let bestMove = null;
+  let ippp=ip;
+        divnum(currentPiles);
+        currentPiles=myArray;
+  for (let i = 0; i < currentPiles.length; i++) {
+    //ip=ippp;
+     ;
+                         
+    let  ips=currentPiles[i];
+    myArray=currentPiles;
+    Search(ips);
+    
+    divnum(ip);
+    let  newPiles =myArray;
+       ;
+                    
+
+      let score = evaluate(newPiles, alpha, beta, 3 - currentPlayer, depth - 1);
+       
+      if ((currentPlayer === 1 && score > alpha) || (currentPlayer === 2 && score < beta)) {
+        if (currentPlayer === 2) {
+          alpha = score;
+        } else {
+          beta = score;
+        }
+      //  de                    ;
+      debugger;
+        bestMove = { piles: newPiles };
+      }
+
+      if (beta<=alpha ) {
+      //                      
+        break;
+      }
+    
+  }
+//                    
+debugger;
+  return bestMove;
+}
+
+
+function evaluate(piles, alpha, beta, currentPlayer, depth) {
+  
+  if (depth === 0 || piles.length === 0) {
+    return currentPlayer === 1 ? 1 : -1;
+  }
+
+  if (currentPlayer === 1) {
+    let maxEval = -Infinity;
+
+    for (let i = 0; i < piles.length; i++) {
+       
+                          
+      let  ips=piles[i];
+    Search(ips);
+    
+    divnum(ip);
+                        
+    let  newPiles =myArray;
+       ;
+      let eval = evaluate(newPiles, alpha, beta, 2, depth - 1);
+      
+      maxEval = Math.max(maxEval, eval);
+      alpha = Math.max(alpha, eval);
+
+      if (beta <= alpha) {
+        break;
+      }
+    }
+
+    return maxEval;
+  } else {
+    let minEval = Infinity;
+
+    for (let i = 0; i < piles.length; i++) {
+       
+                          
+      let  ips=piles[i];
+    Search(ips);
+      
+    
+    divnum(ip)
+  
+                        
+    let  newPiles =myArray;
+       ;
+      let eval = evaluate(newPiles, alpha, beta, 1, depth - 1);
+      
+      minEval = Math.min(minEval, eval);
+      beta = Math.min(beta, eval);
+
+      if (beta <= alpha) {
+        break;
+      }
+    }
+  
+    return minEval;
+  }
+}
+
+  </script>
+</body>
+</html>
